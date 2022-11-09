@@ -8,37 +8,30 @@ class Header extends React.Component {
     this.requestAvatar();
   }
 
-  // Faz uma requisição na API do gravatar se o usuario tiver
-  // cadastrado retorna a url de uma picture
-  requestAvatar = async () => {
-    const { name, score } = this.props;
-    const hash = md5('MyEmailAddress@example.com').toString();
-    const response = await fetch(`https://www.gravatar.com/avatar/${hash}`);
-    const data = await response;
-    const dataUser = { name, score, picture: data.url };
+  // Gera a url de uma picture se o usuario tiver cadastrado retorna uma picture
+  // Salva os dados do usuario logado no localStorage
+  requestAvatar = () => {
+    const { name, score, emailUser } = this.props;
+    const hash = md5(emailUser).toString();
+    const dataUser = { name, score, picture: `https://www.gravatar.com/avatar/${hash}` };
     const dataRanking = JSON.parse(localStorage.getItem('ranking')) || [];
     dataRanking.push(dataUser);
-    // Salva os dados do usuario logado no localStorage
     localStorage.setItem('ranking', JSON.stringify(dataRanking));
   };
 
   render() {
-    const { name, score } = this.props;
-    const dataRanking = JSON.parse(localStorage.getItem('ranking')) || [];
-    const userData = dataRanking.find((user) => user.name === name);
+    const { name, score, emailUser } = this.props;
+    // const dataRanking = JSON.parse(localStorage.getItem('ranking')) || [];
 
-    const avatar = (
-      <img
-        src={ userData.picture }
-        alt="profile"
-        data-testid="header-profile-picture"
-      />
-    );
+    const hash = md5(emailUser).toString();
 
     return (
       <header>
-        {avatar}
-        {/* { userData.picture.length === 0 ? null : avatar } */}
+        <img
+          src={ `https://www.gravatar.com/avatar/${hash}` }
+          alt="profile"
+          data-testid="header-profile-picture"
+        />
         <p data-testid="header-player-name">
           {name}
         </p>
@@ -58,6 +51,7 @@ const mapStateToProps = (state) => ({
 
 Header.propTypes = {
   name: PropTypes.string.isRequired,
+  emailUser: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
 };
 
