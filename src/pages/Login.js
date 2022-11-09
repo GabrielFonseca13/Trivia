@@ -22,6 +22,11 @@ class Login extends React.Component {
     });
   };
 
+  clickSettings = () => {
+    const { history } = this.props;
+    history.push('./settings');
+  };
+
   // função que faz o feth do token na API
   requestToken = async () => {
     const response = await fetch('https://opentdb.com/api_token.php?command=request');
@@ -61,6 +66,14 @@ class Login extends React.Component {
           Play
 
         </button>
+        <button
+          data-testid="btn-settings"
+          type="button"
+          onClick={ this.clickSettings }
+        >
+          Configurações
+        </button>
+        
       </div>
     );
   }
