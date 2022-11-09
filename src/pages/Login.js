@@ -22,6 +22,7 @@ class Login extends React.Component {
     });
   };
 
+  // função que faz o feth do token na API
   requestToken = async () => {
     const response = await fetch('https://opentdb.com/api_token.php?command=request');
     const data = await response.json();
