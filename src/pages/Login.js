@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
   state = {
@@ -19,6 +20,11 @@ class Login extends React.Component {
     this.setState({
       [name]: value,
     });
+  };
+
+  clickSettings = () => {
+    const { history } = this.props;
+    history.push('./settings');
   };
 
   render() {
@@ -46,6 +52,14 @@ class Login extends React.Component {
           Play
 
         </button>
+        <button
+          data-testid="btn-settings"
+          type="button"
+          onClick={ this.clickSettings }
+        >
+          Configurações
+        </button>
+        
       </div>
     );
   }
