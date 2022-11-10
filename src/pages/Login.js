@@ -59,7 +59,6 @@ class Login extends React.Component {
           onClick={ this.handleClick }
         >
           Play
-
         </button>
       </div>
     );
