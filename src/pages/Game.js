@@ -74,6 +74,9 @@ class Game extends React.Component {
     });
   };
 
+  // função para escolher a classe para aplicar nos botões
+  selectClass = (asw) => (this.isRightAnswer(asw) ? 'right' : 'wrong');
+
   render() {
     const { questions, currentIndex, allAsw, clicked } = this.state;
 
@@ -91,8 +94,7 @@ class Game extends React.Component {
                   type="button"
                   key={ index }
                   // se uma das opções forem clikadas faz a verificação de qual é a correta e aplica as classes css
-                  className={ clicked
-                    ? (this.isRightAnswer(asw) ? 'right' : 'wrong') : null }
+                  className={ clicked ? this.selectClass(asw) : null }
                   data-testid={ this.isRightAnswer(asw)
                     ? 'correct-answer' : `wrong-answer-${index}` }
                   onClick={ this.handleClick }
