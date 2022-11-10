@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import './game.css';
 
 class Game extends React.Component {
   state = {
     questions: [],
     currentIndex: 0,
     allAsw: [],
+    clicked: false,
   };
 
   // ao carregar o componente busca na api as questões e põe no estado do componente
@@ -44,6 +46,17 @@ class Game extends React.Component {
     return lista;
   };
 
+  // função para saber se a resposta atual é a resposta certa
+  isRightAnswer = (asw) => {
+    const { questions, currentIndex } = this.state;
+    return asw === questions[currentIndex].correct_answer;
+  };
+
+  // função que muda o estado do cliked
+  handleClick = () => {
+    this.setState({ clicked: true });
+  };
+
   insertCorrectAnswr = () => {
     // desenvolvido pelo grupo
     const { questions, currentIndex } = this.state;
@@ -62,10 +75,10 @@ class Game extends React.Component {
   };
 
   render() {
-    const { questions, currentIndex, allAsw } = this.state;
+    const { questions, currentIndex, allAsw, clicked } = this.state;
 
     return (
-      <div>
+      <div className="game">
         <Header />
         {questions.length && (
           <div>
@@ -77,8 +90,12 @@ class Game extends React.Component {
                 <button
                   type="button"
                   key={ index }
-                  data-testid={ asw === questions[currentIndex].correct_answer
+                  // se uma das opções forem clikadas faz a verificação de qual é a correta e aplica as classes css
+                  className={ clicked
+                    ? (this.isRightAnswer(asw) ? 'right' : 'wrong') : null }
+                  data-testid={ this.isRightAnswer(asw)
                     ? 'correct-answer' : `wrong-answer-${index}` }
+                  onClick={ this.handleClick }
                 >
                   {asw}
                 </button>
