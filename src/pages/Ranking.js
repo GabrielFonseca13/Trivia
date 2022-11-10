@@ -1,9 +1,32 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class Ranking extends React.Component {
+  clickLogin = () => {
+    const { history } = this.props;
+    history.push('./');
+  };
+
   render() {
-    return (<div />);
+    return (
+      <div>
+        <button
+          type="submit"
+          data-testid="btn-go-home"
+          onClick={ this.clickLogin }
+        >
+          Voltar para tela inicial
+
+        </button>
+      </div>
+    );
   }
 }
+Ranking.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
-export default Ranking;
+export default connect()(Ranking);
