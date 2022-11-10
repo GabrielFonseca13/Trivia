@@ -68,7 +68,6 @@ class Login extends React.Component {
           onClick={ this.handleClick }
         >
           Play
-
         </button>
         <button
           data-testid="btn-settings"
