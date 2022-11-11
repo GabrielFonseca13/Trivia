@@ -48,6 +48,8 @@ class Timer extends React.Component {
 Timer.propTypes = {
   clicked: PropTypes.bool.isRequired,
   handleTimer: PropTypes.func.isRequired,
+  count: PropTypes.number.isRequired,
+  changeState: PropTypes.func.isRequired,
 };
 
 export default Timer;

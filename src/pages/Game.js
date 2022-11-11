@@ -25,19 +25,15 @@ class Game extends React.Component {
     this.setState({ questions: questions.results }, () => this.insertCorrectAnswr());
   }
 
-  shouldComponentUpdate() {
-    const { isDisabled } = this.state;
-    let status = false;
-    if (isDisabled === false) {
-      status = true;
-    }
-    return status;
-  }
-
   changeState = () => {
     this.setState((prevState) => ({
       count: prevState.count - 1,
-    }));
+    }), () => this.timeOver());
+  };
+
+  timeOver = () => {
+    const { count } = this.state;
+    this.setState({ isDisabled: count === 0 });
   };
 
   // função que pega o token do localStorage
@@ -98,10 +94,6 @@ class Game extends React.Component {
 
   // função para escolher a classe para aplicar nos botões
   selectClass = (asw) => (this.isRightAnswer(asw) ? 'right' : 'wrong');
-
-  handleTimer = (status) => {
-    this.setState({ isDisabled: status });
-  };
 
   render() {
     const { questions, currentIndex, allAsw, clicked, isDisabled, count } = this.state;
