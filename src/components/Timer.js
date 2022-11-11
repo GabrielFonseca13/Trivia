@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 class Timer extends React.Component {
   state = {
-    count: 30,
     idInterval: 0,
   };
 
@@ -11,24 +10,10 @@ class Timer extends React.Component {
     this.initTimer();
   }
 
-  componentDidUpdate() {
-    const { count } = this.state;
-    const { handleTimer } = this.props;
-    console.log(count);
-    if (count === 0) {
-      handleTimer(true);
-    }
-  }
-
-  changeState = () => {
-    this.setState((prevState) => ({
-      count: prevState.count - 1,
-    }));
-  };
-
   changeTimer = () => {
+    const { changeState } = this.props;
     const interval = 1000;
-    const idInterval = setInterval(() => this.changeState(), interval);
+    const idInterval = setInterval(() => changeState(), interval);
     this.setState({ idInterval });
     console.log(idInterval);
     const intervalToEnd = 30000;
@@ -44,24 +29,18 @@ class Timer extends React.Component {
   };
 
   render() {
-    const { count, idInterval } = this.state;
+    const { idInterval } = this.state;
     const { clicked } = this.props;
 
     if (clicked) clearInterval(idInterval);
 
-    return (
-      <p>
-        Timer:
-        {' '}
-        <span>{count}</span>
-      </p>
-    );
+    return (<div />);
   }
 }
 
 Timer.propTypes = {
   clicked: PropTypes.bool.isRequired,
-  handleTimer: PropTypes.func.isRequired,
+  changeState: PropTypes.func.isRequired,
 };
 
 export default Timer;

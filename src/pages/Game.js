@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Header from '../components/Header';
-import './game.css';
 import Timer from '../components/Timer';
+import { insertScore } from '../redux/actions/userActions';
+import './game.css';
 
 class Game extends React.Component {
   state = {
+    count: 30,
     questions: [],
     currentIndex: 0,
     allAsw: [],
@@ -24,14 +27,16 @@ class Game extends React.Component {
     this.setState({ questions: questions.results }, () => this.insertCorrectAnswr());
   }
 
-  shouldComponentUpdate() {
-    const { isDisabled } = this.state;
-    let status = false;
-    if (isDisabled === false) {
-      status = true;
-    }
-    return status;
-  }
+  changeState = () => {
+    this.setState((prevState) => ({
+      count: prevState.count - 1,
+    }), () => this.timeOver());
+  };
+
+  timeOver = () => {
+    const { count } = this.state;
+    this.setState({ isDisabled: count === 0 });
+  };
 
   // função que pega o token do localStorage
   getToken = () => localStorage.getItem('token');
@@ -63,11 +68,25 @@ class Game extends React.Component {
     return asw === questions[currentIndex].correct_answer;
   };
 
-  // função que muda o estado do cliked
-  handleClick = () => {
-    this.setState({ clicked: true });
+  numberOfHits = () => {
+    const { dispatch } = this.props;
+    const levels = { hard: 3, medium: 2, easy: 1 };
+    const { questions, currentIndex, count } = this.state;
+    const { difficulty } = questions[currentIndex];
+    const num = 10;
+    const score = num + (count * levels[difficulty]);
+    dispatch(insertScore(score));
   };
 
+  // função que muda o estado do cliked
+  handleClick = (asw) => {
+    this.setState({ clicked: true });
+    if (this.isRightAnswer(asw)) {
+      this.numberOfHits();
+    }
+  };
+
+  // try2
   insertCorrectAnswr = () => {
     // desenvolvido pelo grupo
     const { questions, currentIndex } = this.state;
@@ -88,21 +107,27 @@ class Game extends React.Component {
   // função para escolher a classe para aplicar nos botões
   selectClass = (asw) => (this.isRightAnswer(asw) ? 'right' : 'wrong');
 
-  handleTimer = (status) => {
-    this.setState({ isDisabled: status });
-  };
-
   render() {
-    const { questions, currentIndex, allAsw, clicked, isDisabled } = this.state;
+    const { questions, currentIndex, allAsw, clicked, isDisabled, count } = this.state;
 
     return (
       <div className="game">
         <Header />
-        <Timer clicked={ clicked } handleTimer={ this.handleTimer } />
+        <Timer
+          conut={ count }
+          clicked={ clicked }
+          handleTimer={ this.handleTimer }
+          changeState={ this.changeState }
+        />
         {questions.length && (
           <div>
             <p data-testid="question-category">{questions[currentIndex].category}</p>
             <p data-testid="question-text">{questions[currentIndex].question}</p>
+            <p>
+              Timer:
+              {' '}
+              {count}
+            </p>
             <div data-testid="answer-options">
               {/* desenvolvido pelo grupo */}
               {allAsw.map((asw, index) => (
@@ -114,7 +139,7 @@ class Game extends React.Component {
                   className={ clicked ? this.selectClass(asw) : null }
                   data-testid={ this.isRightAnswer(asw)
                     ? 'correct-answer' : `wrong-answer-${index}` }
-                  onClick={ this.handleClick }
+                  onClick={ () => this.handleClick(asw) }
                 >
                   {asw}
                 </button>
@@ -140,6 +165,7 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default Game;
+export default connect()(Game);
