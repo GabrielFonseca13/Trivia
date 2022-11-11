@@ -15,13 +15,12 @@ class Timer extends React.Component {
     const interval = 1000;
     const idInterval = setInterval(() => changeState(), interval);
     this.setState({ idInterval });
-    console.log(idInterval);
     const intervalToEnd = 30000;
     setTimeout(() => clearInterval(idInterval), intervalToEnd);
   };
 
   initTimer = () => {
-    const intervalToInit = 5000;
+    const intervalToInit = 1000;
     setTimeout(
       () => this.changeTimer(),
       intervalToInit,
