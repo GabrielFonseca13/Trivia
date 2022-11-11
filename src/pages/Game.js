@@ -75,6 +75,7 @@ class Game extends React.Component {
     }
   };
 
+  // try2
   insertCorrectAnswr = () => {
     // desenvolvido pelo grupo
     const { questions, currentIndex } = this.state;
