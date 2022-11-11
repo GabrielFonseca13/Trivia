@@ -119,6 +119,15 @@ class Game extends React.Component {
                   {asw}
                 </button>
               ))}
+              {isDisabled || clicked
+                ? (
+                  <button
+                    type="button"
+                    data-testid="btn-next"
+                  >
+                    Próxima Pergunta
+                  </button>)
+                : null}
             </div>
           </div>
         )}
