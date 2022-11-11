@@ -6,6 +6,7 @@ import Timer from '../components/Timer';
 
 class Game extends React.Component {
   state = {
+    count: 30,
     questions: [],
     currentIndex: 0,
     allAsw: [],
@@ -32,6 +33,12 @@ class Game extends React.Component {
     }
     return status;
   }
+
+  changeState = () => {
+    this.setState((prevState) => ({
+      count: prevState.count - 1,
+    }));
+  };
 
   // função que pega o token do localStorage
   getToken = () => localStorage.getItem('token');
@@ -64,8 +71,12 @@ class Game extends React.Component {
   };
 
   // função que muda o estado do cliked
-  handleClick = () => {
+  handleClick = (asw) => {
+    const { count } = this.state;
     this.setState({ clicked: true });
+    if (this.isRightAnswer(asw)) {
+      console.log('Acertou', count);
+    }
   };
 
   insertCorrectAnswr = () => {
@@ -93,16 +104,26 @@ class Game extends React.Component {
   };
 
   render() {
-    const { questions, currentIndex, allAsw, clicked, isDisabled } = this.state;
+    const { questions, currentIndex, allAsw, clicked, isDisabled, count } = this.state;
 
     return (
       <div className="game">
         <Header />
-        <Timer clicked={ clicked } handleTimer={ this.handleTimer } />
+        <Timer
+          conut={ count }
+          clicked={ clicked }
+          handleTimer={ this.handleTimer }
+          changeState={ this.changeState }
+        />
         {questions.length && (
           <div>
             <p data-testid="question-category">{questions[currentIndex].category}</p>
             <p data-testid="question-text">{questions[currentIndex].question}</p>
+            <p>
+              Timer:
+              {' '}
+              {count}
+            </p>
             <div data-testid="answer-options">
               {/* desenvolvido pelo grupo */}
               {allAsw.map((asw, index) => (
@@ -114,7 +135,7 @@ class Game extends React.Component {
                   className={ clicked ? this.selectClass(asw) : null }
                   data-testid={ this.isRightAnswer(asw)
                     ? 'correct-answer' : `wrong-answer-${index}` }
-                  onClick={ this.handleClick }
+                  onClick={ () => this.handleClick(asw) }
                 >
                   {asw}
                 </button>
