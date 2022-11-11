@@ -14,6 +14,7 @@ class Game extends React.Component {
     allAsw: [],
     clicked: false,
     isDisabled: false,
+    reStartTimer: true,
   };
 
   // ao carregar o componente busca na api as questões e põe no estado do componente
@@ -86,7 +87,26 @@ class Game extends React.Component {
     }
   };
 
-  // try2
+  // função que controla o botão para passar a proxima questão,
+  // mudandando o estado da variável currentIndex
+  handleNextQuestion = () => {
+    const { history } = this.props;
+    const { questions, currentIndex } = this.state;
+    if (currentIndex === questions.length - 1) {
+      history.push('/feedback');
+    }
+    this.setState((prevState) => ({
+      ...prevState,
+      currentIndex: prevState.currentIndex + 1,
+      count: 30,
+      clicked: false,
+      reStartTimer: false,
+    }), () => {
+      this.insertCorrectAnswr();
+      this.setState({ reStartTimer: true });
+    });
+  };
+
   insertCorrectAnswr = () => {
     // desenvolvido pelo grupo
     const { questions, currentIndex } = this.state;
@@ -108,17 +128,18 @@ class Game extends React.Component {
   selectClass = (asw) => (this.isRightAnswer(asw) ? 'right' : 'wrong');
 
   render() {
-    const { questions, currentIndex, allAsw, clicked, isDisabled, count } = this.state;
+    const { questions, currentIndex, allAsw, clicked,
+      isDisabled, count, reStartTimer } = this.state;
 
     return (
       <div className="game">
         <Header />
-        <Timer
+        {reStartTimer
+        && <Timer
           conut={ count }
           clicked={ clicked }
-          handleTimer={ this.handleTimer }
           changeState={ this.changeState }
-        />
+        />}
         {questions.length && (
           <div>
             <p data-testid="question-category">{questions[currentIndex].category}</p>
@@ -149,6 +170,7 @@ class Game extends React.Component {
                   <button
                     type="button"
                     data-testid="btn-next"
+                    onClick={ this.handleNextQuestion }
                   >
                     Próxima Pergunta
                   </button>)
