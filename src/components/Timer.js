@@ -10,13 +10,6 @@ class Timer extends React.Component {
     this.initTimer();
   }
 
-  componentDidUpdate() {
-    const { handleTimer, count } = this.props;
-    if (count === 0) {
-      handleTimer(true);
-    }
-  }
-
   changeTimer = () => {
     const { changeState } = this.props;
     const interval = 1000;
@@ -47,8 +40,6 @@ class Timer extends React.Component {
 
 Timer.propTypes = {
   clicked: PropTypes.bool.isRequired,
-  handleTimer: PropTypes.func.isRequired,
-  count: PropTypes.number.isRequired,
   changeState: PropTypes.func.isRequired,
 };
 

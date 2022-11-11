@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Header from '../components/Header';
-import './game.css';
 import Timer from '../components/Timer';
+import { insertScore } from '../redux/actions/userActions';
+import './game.css';
 
 class Game extends React.Component {
   state = {
@@ -66,12 +68,21 @@ class Game extends React.Component {
     return asw === questions[currentIndex].correct_answer;
   };
 
+  numberOfHits = () => {
+    const { dispatch } = this.props;
+    const levels = { hard: 3, medium: 2, easy: 1 };
+    const { questions, currentIndex, count } = this.state;
+    const { difficulty } = questions[currentIndex];
+    const num = 10;
+    const score = num + (count * levels[difficulty]);
+    dispatch(insertScore(score));
+  };
+
   // função que muda o estado do cliked
   handleClick = (asw) => {
-    const { count } = this.state;
     this.setState({ clicked: true });
     if (this.isRightAnswer(asw)) {
-      console.log('Acertou', count);
+      this.numberOfHits();
     }
   };
 
@@ -154,6 +165,7 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default Game;
+export default connect()(Game);
