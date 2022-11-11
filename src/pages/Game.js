@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import './game.css';
+import Timer from '../components/Timer';
 
 class Game extends React.Component {
   state = {
@@ -9,6 +10,7 @@ class Game extends React.Component {
     currentIndex: 0,
     allAsw: [],
     clicked: false,
+    isDisabled: false,
   };
 
   // ao carregar o componente busca na api as questões e põe no estado do componente
@@ -20,6 +22,15 @@ class Game extends React.Component {
       history.push('/');
     }
     this.setState({ questions: questions.results }, () => this.insertCorrectAnswr());
+  }
+
+  shouldComponentUpdate() {
+    const { isDisabled } = this.state;
+    let status = false;
+    if (isDisabled === false) {
+      status = true;
+    }
+    return status;
   }
 
   // função que pega o token do localStorage
@@ -77,12 +88,17 @@ class Game extends React.Component {
   // função para escolher a classe para aplicar nos botões
   selectClass = (asw) => (this.isRightAnswer(asw) ? 'right' : 'wrong');
 
+  handleTimer = (status) => {
+    this.setState({ isDisabled: status });
+  };
+
   render() {
-    const { questions, currentIndex, allAsw, clicked } = this.state;
+    const { questions, currentIndex, allAsw, clicked, isDisabled } = this.state;
 
     return (
       <div className="game">
         <Header />
+        <Timer clicked={ clicked } handleTimer={ this.handleTimer } />
         {questions.length && (
           <div>
             <p data-testid="question-category">{questions[currentIndex].category}</p>
@@ -93,6 +109,7 @@ class Game extends React.Component {
                 <button
                   type="button"
                   key={ index }
+                  disabled={ isDisabled }
                   // se uma das opções forem clikadas faz a verificação de qual é a correta e aplica as classes css
                   className={ clicked ? this.selectClass(asw) : null }
                   data-testid={ this.isRightAnswer(asw)
