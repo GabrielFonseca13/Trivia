@@ -18,12 +18,12 @@ class Feedback extends React.Component {
     const { score, assertions } = this.props;
     const averageAnswers = 3;
     return (
-      <div>
+      <div className="feedback">
         <Header />
         <p data-testid="feedback-total-score">{score}</p>
         <p data-testid="feedback-total-question">{assertions}</p>
         {assertions >= averageAnswers ? <p data-testid="feedback-text">Well Done!</p>
-          : <p ata-testid="feedback-text">Could be better...</p>}
+          : <p data-testid="feedback-text">Could be better...</p>}
         <button
           type="submit"
           data-testid="btn-play-again"

@@ -11,6 +11,7 @@ class Ranking extends React.Component {
   render() {
     return (
       <div>
+        <h1 data-testid="ranking-title">Rankings</h1>
         <button
           type="submit"
           data-testid="btn-go-home"
