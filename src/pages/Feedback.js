@@ -44,6 +44,7 @@ class Feedback extends React.Component {
     );
   }
 }
+
 const mapStateToProps = (state) => ({
   score: state.player.score,
   assertions: state.player.assertions,
@@ -58,3 +59,4 @@ Feedback.propTypes = {
 };
 
 export default connect(mapStateToProps)(Feedback);
+

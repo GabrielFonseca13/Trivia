@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Header from '../components/Header';
 import Timer from '../components/Timer';
 import { insertScore } from '../redux/actions/userActions';
+import './game.css';
 
 class Game extends React.Component {
   state = {
@@ -134,11 +135,11 @@ class Game extends React.Component {
       <div className="game">
         <Header />
         {reStartTimer
-          && <Timer
-            conut={ count }
-            clicked={ clicked }
-            changeState={ this.changeState }
-          />}
+        && <Timer
+          conut={ count }
+          clicked={ clicked }
+          changeState={ this.changeState }
+        />}
         {questions.length && (
           <div>
             <p data-testid="question-category">{questions[currentIndex].category}</p>
