@@ -43,7 +43,6 @@ class Ranking extends React.Component {
           onClick={ this.clickLogin }
         >
           Voltar para tela inicial
-
         </button>
       </div>
     );

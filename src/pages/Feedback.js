@@ -60,7 +60,6 @@ class Feedback extends React.Component {
           onClick={ this.clickRanking }
         >
           Ranking
-
         </button>
       </div>
     );
