@@ -1,12 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import md5 from 'crypto-js/md5';
 import Header from '../components/Header';
+import { loginUser } from '../redux/actions/userActions';
 
 class Feedback extends React.Component {
+  componentDidMount() {
+    this.saveDataUser();
+  }
+
+  // Gera a url de uma picture se o usuario tiver cadastrado retorna uma picture
+  // Salva os dados do usuario logado no localStorage
+  saveDataUser = () => {
+    const { name, score, emailUser } = this.props;
+    const hash = md5(emailUser).toString();
+    const dataUser = { name, score, picture: `https://www.gravatar.com/avatar/${hash}` };
+    const dataRanking = JSON.parse(localStorage.getItem('ranking')) || [];
+    dataRanking.push(dataUser);
+    localStorage.setItem('ranking', JSON.stringify(dataRanking));
+  };
+
   clickPlayAgain = () => {
-    const { history } = this.props;
+    const { history, dispatch, name, emailUser } = this.props;
     history.push('./');
+    const objUser = {
+      name,
+      email: emailUser,
+    };
+    dispatch(loginUser(objUser));
   };
 
   clickRanking = () => {
@@ -38,7 +60,6 @@ class Feedback extends React.Component {
           onClick={ this.clickRanking }
         >
           Ranking
-
         </button>
       </div>
     );
@@ -46,16 +67,21 @@ class Feedback extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  name: state.player.name,
+  emailUser: state.player.gravatarEmail,
   score: state.player.score,
   assertions: state.player.assertions,
 });
 
 Feedback.propTypes = {
+  name: PropTypes.string.isRequired,
+  emailUser: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
   assertions: PropTypes.number.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);
