@@ -6,9 +6,14 @@ import App from '../App';
 import Game from '../pages/Game';
 import {questionsMock} from './Mocks/questionsMock';
 import {tokenMock} from './Mocks/tokenMock';
-import { act } from 'react-dom/test-utils';
-// import { act } from 'react-dom/test-utils';
- 
+
+beforeEach(() => {
+  jest.spyOn(global, 'fetch');
+  global.fetch.mockResolvedValue({
+    json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
+  });
+});
+
 afterEach(() => {
  jest.clearAllMocks();
 });
@@ -19,7 +24,6 @@ const TEST_EMAIL = 'teste@teste.com';
 describe('Testes da Página Game', () => {
   
   it('verificar se os elementos o Header estao renderizados na tela', async () => {
-    
     renderWithRouterAndRedux(<Game />);
     const profilePicture = screen.getByTestId("header-profile-picture");
     expect(profilePicture).toBeInTheDocument();
@@ -30,23 +34,7 @@ describe('Testes da Página Game', () => {
   });
   
   it('verifica se as perguntas sao renderizadas na tela', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-    });
-    
-    // global.fetch = jest.fn(() => Promise.resolve({
-    //   json: () => Promise.resolve(questionsMock),
-    // }));
-    
     renderWithRouterAndRedux(<App />);
-    
-    // act(() => {
-    //   history.push('/game');
-    // });
-
-    // console.log('tokenMock',tokenMock);
-    // console.log('questionsMock',questionsMock);
     
     const allInputs = screen.getAllByRole('textbox');
     const inputName = allInputs[0];
@@ -62,7 +50,7 @@ describe('Testes da Página Game', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);  
 
     await waitFor(() => {
-      expect(screen.getByTestId("question-category")).toBeInTheDocument();;
+      expect(screen.getByTestId("question-category")).toBeInTheDocument();
     })
     
     const correctAnswer1 = screen.getByTestId('correct-answer');
@@ -99,11 +87,8 @@ describe('Testes da Página Game', () => {
       expect(screen.getByText(/Well Done!/i).toBeInTheDocument);
     })
   });
+
   it('Teste se o contador funciona', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-    });
     renderWithRouterAndRedux(<App />);
     
     const allInputs = screen.getAllByRole('textbox');
@@ -117,18 +102,29 @@ describe('Testes da Página Game', () => {
     userEvent.type(inputEmail, TEST_EMAIL);
     userEvent.click(playButton);
 
-    expect(global.fetch).toHaveBeenCalledTimes(1);  
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+    jest.spyOn(global, 'setInterval');
 
     await waitFor(() => {
-      const questionButton = screen.getByRole('button', {name: /Nine/i});
-      expect(questionButton).toBeInTheDocument();
-      expect(questionButton).not.toBeDisabled();
+      expect(screen.getByTestId("question-category")).toBeInTheDocument();
     });
-    setTimeout(() => {
-      const questionButton = screen.getByRole('button', {name: /Nine/i});
-      expect(questionButton).toBeInTheDocument();
-      expect(questionButton).toBeDisabled();
-    }, 32000)
-    
+
+    expect(setTimeout).toHaveBeenCalled();
+    jest.advanceTimersByTime(2000);
+    expect(setInterval).toHaveBeenCalled();
+
+    const questionButton = screen.getByRole('button', {name: /Nine/i});
+    expect(questionButton).toBeInTheDocument();
+    expect(questionButton).not.toBeDisabled();
+
+    const countTimer = screen.getByText('Timer: 30');
+    expect(countTimer).toBeInTheDocument();
+
+    userEvent.click(questionButton);
+    const countTimer2 = screen.getByText('Timer: 29');
+    expect(countTimer2).toBeInTheDocument();
+    const score = screen.getByText('100');
+    expect(score).toBeInTheDocument();
   });
 });
