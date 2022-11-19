@@ -19,12 +19,12 @@ class Game extends React.Component {
 
   // ao carregar o componente busca na api as questões e põe no estado do componente
   async componentDidMount() {
-    const { history } = this.props;
+    // const { history } = this.props;
     const questions = await this.getQuestions();
-    if (questions.response_code) {
-      localStorage.removeItem('token');
-      history.push('/');
-    }
+    // if (questions.response_code) {
+    //   localStorage.removeItem('token');
+    //   history.push('/');
+    // }
     this.setState({ questions: questions.results }, () => this.insertCorrectAnswr());
   }
 

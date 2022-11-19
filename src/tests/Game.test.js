@@ -6,27 +6,43 @@ import App from '../App';
 import Game from '../pages/Game';
 import {questionsMock} from './Mocks/questionsMock';
 import {tokenMock} from './Mocks/tokenMock';
-import { act } from 'react-dom/test-utils';
-
-beforeEach(() => {
-  jest.spyOn(global, 'fetch');
-  global.fetch.mockResolvedValue({
-    json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-  });
-});
+// import {tokenFailed} from './Mocks/tokenFailedMock';
 
 afterEach(() => {
  jest.clearAllMocks();
- jest.clearAllTimers();
 });
 
 const TEST_NAME = 'TESTE NAME';
 const TEST_EMAIL = 'teste@teste.com';
 
 describe('Testes da Página Game', () => {
+  //   it('verificar se quando a API não responde o game não inicia', async () => {
+  //   jest.spyOn(global, 'fetch');
+  //   global.fetch.mockResolvedValue({
+  //     json: jest.fn().mockResolvedValueOnce(tokenFailed),
+  //   });
+
+  //   const { history } = renderWithRouterAndRedux(<App />);
+    
+  //   const allInputs = screen.getAllByRole('textbox');
+  //   const inputName = allInputs[0];
+  //   const inputEmail = allInputs[1];
+  //   const playButton = screen.getByRole('button', { name: /play/i });
+  
+  //   userEvent.type(inputName, TEST_NAME);
+  //   userEvent.type(inputEmail, TEST_EMAIL);
+  //   userEvent.click(playButton);
+
+  //   const {pathname} = history.location;
+  //   expect(pathname).not.toBe('/game');
+  // });
   
   it('verificar se os elementos o Header estao renderizados na tela', async () => {
-    
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
+    });
+
     renderWithRouterAndRedux(<Game />);
     const profilePicture = screen.getByTestId("header-profile-picture");
     expect(profilePicture).toBeInTheDocument();
@@ -37,7 +53,11 @@ describe('Testes da Página Game', () => {
   });
   
   it('verifica se as perguntas sao renderizadas na tela', async () => {
-    
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
+    });
+
     renderWithRouterAndRedux(<App />);
     
     const allInputs = screen.getAllByRole('textbox');
@@ -54,7 +74,7 @@ describe('Testes da Página Game', () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);  
 
     await waitFor(() => {
-      expect(screen.getByTestId("question-category")).toBeInTheDocument();;
+      expect(screen.getByTestId("question-category")).toBeInTheDocument();
     })
     
     const correctAnswer1 = screen.getByTestId('correct-answer');
@@ -93,6 +113,10 @@ describe('Testes da Página Game', () => {
   });
 
   it('Teste se o contador funciona', async () => {
+    jest.spyOn(global, 'fetch');
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
+    });
     renderWithRouterAndRedux(<App />);
     
     const allInputs = screen.getAllByRole('textbox');
@@ -105,11 +129,10 @@ describe('Testes da Página Game', () => {
     userEvent.type(inputName, TEST_NAME);
     userEvent.type(inputEmail, TEST_EMAIL);
     userEvent.click(playButton);
-    // act(() => {
-      jest.useFakeTimers();
-      jest.spyOn(global, 'setTimeout');
-      jest.spyOn(global, 'setInterval');
-    // });
+
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+    jest.spyOn(global, 'setInterval');
 
     await waitFor(() => {
       expect(screen.getByTestId("question-category")).toBeInTheDocument();
@@ -126,15 +149,10 @@ describe('Testes da Página Game', () => {
     const countTimer = screen.getByText('Timer: 30');
     expect(countTimer).toBeInTheDocument();
 
-    // jest.runOnlyPendingTimers();
-
-    // jest.advanceTimersToNextTimer(10000);
-  
-    // jest.advanceTimersByTime(1000);
-    // setInterval.mockResolvedValue(1000);
-
     userEvent.click(questionButton);
     const countTimer2 = screen.getByText('Timer: 29');
     expect(countTimer2).toBeInTheDocument();
+    const score = screen.getByText('100');
+    expect(score).toBeInTheDocument();
   });
 });
