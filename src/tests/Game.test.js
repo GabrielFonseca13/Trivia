@@ -6,7 +6,13 @@ import App from '../App';
 import Game from '../pages/Game';
 import {questionsMock} from './Mocks/questionsMock';
 import {tokenMock} from './Mocks/tokenMock';
-// import {tokenFailed} from './Mocks/tokenFailedMock';
+
+beforeEach(() => {
+  jest.spyOn(global, 'fetch');
+  global.fetch.mockResolvedValue({
+    json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
+  });
+});
 
 afterEach(() => {
  jest.clearAllMocks();
@@ -16,33 +22,8 @@ const TEST_NAME = 'TESTE NAME';
 const TEST_EMAIL = 'teste@teste.com';
 
 describe('Testes da Página Game', () => {
-  //   it('verificar se quando a API não responde o game não inicia', async () => {
-  //   jest.spyOn(global, 'fetch');
-  //   global.fetch.mockResolvedValue({
-  //     json: jest.fn().mockResolvedValueOnce(tokenFailed),
-  //   });
-
-  //   const { history } = renderWithRouterAndRedux(<App />);
-    
-  //   const allInputs = screen.getAllByRole('textbox');
-  //   const inputName = allInputs[0];
-  //   const inputEmail = allInputs[1];
-  //   const playButton = screen.getByRole('button', { name: /play/i });
-  
-  //   userEvent.type(inputName, TEST_NAME);
-  //   userEvent.type(inputEmail, TEST_EMAIL);
-  //   userEvent.click(playButton);
-
-  //   const {pathname} = history.location;
-  //   expect(pathname).not.toBe('/game');
-  // });
   
   it('verificar se os elementos o Header estao renderizados na tela', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-    });
-
     renderWithRouterAndRedux(<Game />);
     const profilePicture = screen.getByTestId("header-profile-picture");
     expect(profilePicture).toBeInTheDocument();
@@ -53,11 +34,6 @@ describe('Testes da Página Game', () => {
   });
   
   it('verifica se as perguntas sao renderizadas na tela', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-    });
-
     renderWithRouterAndRedux(<App />);
     
     const allInputs = screen.getAllByRole('textbox');
@@ -113,10 +89,6 @@ describe('Testes da Página Game', () => {
   });
 
   it('Teste se o contador funciona', async () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValueOnce(tokenMock).mockResolvedValue(questionsMock),
-    });
     renderWithRouterAndRedux(<App />);
     
     const allInputs = screen.getAllByRole('textbox');
